@@ -6,8 +6,11 @@ markups, and putting more money back in farmers' pockets.
 
 ## What is included
 
-- A responsive landing page with clear entry points for shoppers, growers, load
-  shifters, and admins
+- A Next.js web app with a responsive landing page and clear entry points for
+  shoppers, growers, load shifters, and admins
+- Supabase-backed signup and login flows for shopper, grower, and load shifter
+  roles
+- A role-aware portal page that reads each user profile from Supabase
 - A Supabase schema designed for role-based users, listings, orders, addresses,
   deliveries, commissions, and payout tracking
 - Address strategy notes for accurate delivery capture using autocomplete and
@@ -15,10 +18,20 @@ markups, and putting more money back in farmers' pockets.
 
 ## Suggested stack
 
-- Frontend: responsive web first
+- Frontend: Next.js web app, responsive and mobile-ready
 - Backend and auth: Supabase
 - Repository hosting: GitHub
 - Mobile expansion: shared app flows after the web journey is proven
+
+## Run locally
+
+1. Install dependencies:
+   `npm install`
+2. Add environment variables in `.env.local`:
+   - `NEXT_PUBLIC_SUPABASE_URL`
+   - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+3. Start the app:
+   `npm run dev`
 
 ## Address recommendation
 
@@ -35,14 +48,19 @@ for the fuller implementation notes.
 
 ## Project structure
 
-- [index.html](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/index.html)
-- [styles.css](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/styles.css)
+- [app/page.js](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/app/page.js)
+- [app/signup/page.js](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/app/signup/page.js)
+- [app/login/page.js](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/app/login/page.js)
+- [app/portal/page.js](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/app/portal/page.js)
+- [app/globals.css](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/app/globals.css)
+- [lib/supabase/client.js](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/lib/supabase/client.js)
 - [supabase/schema.sql](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/supabase/schema.sql)
+- [supabase/migrations/20260328162732_initial_schema.sql](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/supabase/migrations/20260328162732_initial_schema.sql)
 - [docs/address-strategy.md](/Users/tania.byrnes/Desktop/Lombardis%20Farm%20to%20Fork/docs/address-strategy.md)
 
 ## Next steps
 
-1. Create a Supabase project and run `supabase/schema.sql`.
-2. Create a GitHub repository and push this folder.
-3. Replace placeholder entry links with real app routes.
-4. Add authentication and onboarding for each role.
+1. Add profile completion flows for shopper, grower, and load shifter.
+2. Build address capture with autocomplete and validation.
+3. Add listings, orders, delivery jobs, and dashboard actions.
+4. Expand into mobile once the web flows are proven.

@@ -8,7 +8,7 @@
   --primary: #bf5d2e;
   --primary-dark: #8f4220;
   --accent: #d8b75d;
-  --line: rgba(36, 49, 40, 0.1);
+  --line: rgba(36, 49, 40, 0.12);
   --shadow: 0 24px 60px rgba(32, 57, 47, 0.14);
 }
 
@@ -22,7 +22,7 @@ html {
 
 body {
   margin: 0;
-  font-family: "Manrope", sans-serif;
+  font-family: "Segoe UI", sans-serif;
   color: var(--text);
   background:
     radial-gradient(circle at top left, rgba(216, 183, 93, 0.24), transparent 28%),
@@ -34,6 +34,11 @@ a {
   text-decoration: none;
 }
 
+main,
+.app-shell {
+  min-height: 100vh;
+}
+
 .hero {
   padding: 1.5rem clamp(1.2rem, 2vw, 2.4rem) 4rem;
 }
@@ -41,7 +46,9 @@ a {
 .topbar,
 .hero-content,
 .section,
-.footer {
+.footer,
+.auth-page,
+.portal-page {
   max-width: 1180px;
   margin: 0 auto;
 }
@@ -56,8 +63,9 @@ a {
 
 .brand,
 .footer-brand {
-  font-family: "DM Serif Display", serif;
   font-size: clamp(1.5rem, 2vw, 2rem);
+  font-weight: 800;
+  letter-spacing: -0.03em;
 }
 
 .topbar-links {
@@ -81,7 +89,8 @@ a {
 
 .eyebrow,
 .entry-kicker,
-.panel-title {
+.panel-title,
+.auth-kicker {
   text-transform: uppercase;
   letter-spacing: 0.14em;
   font-size: 0.78rem;
@@ -93,22 +102,19 @@ h1,
 h2,
 h3 {
   margin: 0;
-}
-
-h1,
-h2 {
-  font-family: "DM Serif Display", serif;
   line-height: 1;
 }
 
 h1 {
-  font-size: clamp(3rem, 7vw, 5.9rem);
+  font-size: clamp(3rem, 7vw, 5.7rem);
   max-width: 10ch;
   margin: 0.4rem 0 1rem;
+  letter-spacing: -0.05em;
 }
 
 h2 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: clamp(2rem, 5vw, 3.2rem);
+  letter-spacing: -0.04em;
 }
 
 h3 {
@@ -120,12 +126,15 @@ h3 {
 .hero-copy p,
 .hero-panel p,
 .section p,
-.footer p {
+.footer p,
+.form-helper,
+.status-message {
   line-height: 1.7;
   color: var(--muted);
 }
 
-.hero-actions {
+.hero-actions,
+.auth-actions {
   display: flex;
   gap: 1rem;
   flex-wrap: wrap;
@@ -136,11 +145,14 @@ h3 {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  min-height: 48px;
   padding: 0.9rem 1.3rem;
+  border: none;
   border-radius: 999px;
   background: var(--primary);
   color: #fff;
   font-weight: 800;
+  cursor: pointer;
   box-shadow: var(--shadow);
 }
 
@@ -154,6 +166,10 @@ h3 {
   color: var(--text);
   border: 1px solid var(--line);
   box-shadow: none;
+}
+
+.button-full {
+  width: 100%;
 }
 
 .hero-points {
@@ -171,7 +187,10 @@ h3 {
 .flow-grid article,
 .entry-card,
 .detail-card,
-.future-grid article {
+.future-grid article,
+.auth-card,
+.portal-card,
+.portal-summary {
   background: var(--surface);
   border: 1px solid rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(12px);
@@ -231,13 +250,13 @@ h3 {
 .flow-grid,
 .entry-grid,
 .detail-grid,
-.future-grid {
+.future-grid,
+.portal-grid {
   display: grid;
   gap: 1.2rem;
 }
 
 .benefit-grid,
-.flow-grid,
 .future-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -247,7 +266,8 @@ h3 {
 }
 
 .entry-grid,
-.detail-grid {
+.detail-grid,
+.portal-grid {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
@@ -255,7 +275,9 @@ h3 {
 .flow-grid article,
 .entry-card,
 .detail-card,
-.future-grid article {
+.future-grid article,
+.portal-card,
+.portal-summary {
   padding: 1.4rem;
 }
 
@@ -265,7 +287,8 @@ h3 {
   min-height: 220px;
 }
 
-.entry-card span {
+.entry-card span,
+.portal-card span {
   display: inline-flex;
   margin-top: 1rem;
   font-weight: 800;
@@ -301,13 +324,81 @@ h3 {
   font-weight: 700;
 }
 
+.auth-page,
+.portal-page {
+  padding: 2rem 1.2rem 4rem;
+}
+
+.auth-card,
+.portal-summary {
+  max-width: 680px;
+  padding: 2rem;
+}
+
+.auth-grid {
+  display: grid;
+  gap: 1rem;
+}
+
+.field-group {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.field-group label {
+  font-weight: 700;
+}
+
+.field-group input,
+.field-group select,
+.field-group textarea {
+  width: 100%;
+  min-height: 48px;
+  padding: 0.85rem 1rem;
+  border: 1px solid var(--line);
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.7);
+  color: var(--text);
+  font: inherit;
+}
+
+.field-group textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+.status-message {
+  margin: 0;
+}
+
+.status-error {
+  color: #8f2424;
+}
+
+.status-success {
+  color: #2f6c43;
+}
+
+.portal-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+
+.portal-grid {
+  margin-top: 1.5rem;
+}
+
 @media (max-width: 980px) {
   .hero-content,
   .flow-grid,
   .benefit-grid,
   .entry-grid,
   .detail-grid,
-  .future-grid {
+  .future-grid,
+  .portal-grid {
     grid-template-columns: 1fr;
   }
 
@@ -316,7 +407,8 @@ h3 {
   }
 
   .topbar,
-  .footer {
+  .footer,
+  .portal-header {
     flex-direction: column;
     align-items: flex-start;
   }
@@ -325,10 +417,6 @@ h3 {
 @media (max-width: 640px) {
   .hero {
     padding-top: 1rem;
-  }
-
-  .topbar-links {
-    gap: 0.8rem;
   }
 
   h1 {
@@ -341,7 +429,10 @@ h3 {
   .flow-grid article,
   .entry-card,
   .detail-card,
-  .future-grid article {
+  .future-grid article,
+  .auth-card,
+  .portal-card,
+  .portal-summary {
     border-radius: 20px;
   }
 }

@@ -396,6 +396,46 @@ h3 {
   margin-top: 1.5rem;
 }
 
+.listings-layout {
+  align-items: start;
+}
+
+.listing-stack {
+  display: grid;
+  gap: 1rem;
+}
+
+.listing-item {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.66);
+}
+
+.listing-header {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: flex-start;
+}
+
+.search-toolbar {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 1rem;
+}
+
+.market-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.market-card {
+  min-height: 220px;
+}
+
 .onboarding-card {
   max-width: 920px;
 }
@@ -489,8 +529,14 @@ h3 {
   }
 
   .auth-grid,
-  .toggle-grid {
+  .toggle-grid,
+  .search-toolbar,
+  .market-grid {
     grid-template-columns: 1fr;
+  }
+
+  .listing-header {
+    flex-direction: column;
   }
 }
 

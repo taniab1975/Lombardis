@@ -206,7 +206,23 @@ export default function PortalPage() {
                 each role to real listings, orders, addresses, and delivery
                 workflows in Supabase.
               </p>
-              <span>Next build target</span>
+              {currentRole === "grower" && action === "Update stock, prices, and seasonal listings" ? (
+                <Link className="inline-link" href="/grower/listings">
+                  Open grower listings
+                </Link>
+              ) : null}
+              {currentRole === "shopper" && action === "Browse fresh local listings" ? (
+                <Link className="inline-link" href="/shop">
+                  Search all growers
+                </Link>
+              ) : null}
+              {!(
+                (currentRole === "grower" &&
+                  action === "Update stock, prices, and seasonal listings") ||
+                (currentRole === "shopper" && action === "Browse fresh local listings")
+              ) ? (
+                <span>Next build target</span>
+              ) : null}
             </article>
           ))}
         </div>

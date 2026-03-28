@@ -39,6 +39,7 @@ export default function HomePage() {
             <a href="#how-it-works">How It Works</a>
             <a href="#entry-points">Who It&apos;s For</a>
             <a href="#future">App Roadmap</a>
+            <Link href="/shop">Browse Products</Link>
             <Link className="button button-outline" href="/login">
               Log In
             </Link>
@@ -59,6 +60,9 @@ export default function HomePage() {
               <a className="button" href="#entry-points">
                 Choose Your Path
               </a>
+              <Link className="button button-secondary" href="/shop">
+                Browse Marketplace
+              </Link>
               <Link className="button button-secondary" href="/signup">
                 Join The Marketplace
               </Link>
@@ -115,6 +119,9 @@ export default function HomePage() {
               Access fresher paddock-to-plate food, clearer provenance, and
               fairer prices than the major supermarket chain model.
             </p>
+            <Link className="inline-link" href="/shop">
+              Search produce across all growers
+            </Link>
           </article>
           <article>
             <h3>For growers</h3>

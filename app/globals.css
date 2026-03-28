@@ -459,6 +459,13 @@ h3 {
   color: var(--primary);
 }
 
+.address-status-card {
+  padding: 1rem;
+  border: 1px solid var(--line);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.7);
+}
+
 @media (max-width: 980px) {
   .hero-content,
   .flow-grid,

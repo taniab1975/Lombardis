@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
 import { getCompletionState, getRoleLabel } from "../../lib/profile-completion";
+import AddressFields from "./address-fields";
 
 const initialState = {
   fullName: "",
@@ -31,6 +32,12 @@ const initialState = {
   postcode: "",
   countryCode: "AU",
   deliveryNotes: "",
+  formattedAddress: "",
+  latitude: null,
+  longitude: null,
+  placeId: "",
+  validationProvider: "manual_pending_autocomplete",
+  validationStatus: "pending",
 };
 
 function buildFormattedAddress(formState) {
@@ -147,6 +154,13 @@ export default function OnboardingPage() {
           postcode: primaryAddress?.postcode || "",
           countryCode: primaryAddress?.country_code || "AU",
           deliveryNotes: primaryAddress?.delivery_notes || "",
+          formattedAddress: primaryAddress?.formatted_address || "",
+          latitude: primaryAddress?.latitude ?? null,
+          longitude: primaryAddress?.longitude ?? null,
+          placeId: primaryAddress?.place_id || "",
+          validationProvider:
+            primaryAddress?.validation_provider || "manual_pending_autocomplete",
+          validationStatus: primaryAddress?.validation_status || "pending",
         });
 
         const completion = getCompletionState({
@@ -177,6 +191,23 @@ export default function OnboardingPage() {
     }));
   }
 
+  function handleAddressSelect(addressData) {
+    setFormState((current) => ({
+      ...current,
+      addressLine1: addressData.addressLine1 || current.addressLine1,
+      suburb: addressData.suburb || current.suburb,
+      state: addressData.state || current.state,
+      postcode: addressData.postcode || current.postcode,
+      countryCode: addressData.countryCode || current.countryCode,
+      formattedAddress: addressData.formattedAddress || current.formattedAddress,
+      latitude: addressData.latitude,
+      longitude: addressData.longitude,
+      placeId: addressData.placeId || current.placeId,
+      validationProvider: addressData.validationProvider || current.validationProvider,
+      validationStatus: addressData.validationStatus || current.validationStatus,
+    }));
+  }
+
   async function upsertAddress(supabase) {
     const needsAddress = role === "shopper" || role === "grower";
 
@@ -194,11 +225,14 @@ export default function OnboardingPage() {
       state: formState.state,
       postcode: formState.postcode,
       country_code: formState.countryCode || "AU",
-      formatted_address: buildFormattedAddress(formState),
+      formatted_address: formState.formattedAddress || buildFormattedAddress(formState),
+      latitude: formState.latitude,
+      longitude: formState.longitude,
       delivery_notes: formState.deliveryNotes || null,
+      place_id: formState.placeId || null,
       is_default: true,
-      validation_provider: "manual_pending_autocomplete",
-      validation_status: "pending",
+      validation_provider: formState.validationProvider || "manual_pending_autocomplete",
+      validation_status: formState.validationStatus || "pending",
     };
 
     if (addressId) {
@@ -328,8 +362,9 @@ export default function OnboardingPage() {
           <p className="auth-kicker">{getRoleLabel(role)} onboarding</p>
           <h1>Complete the details that make your account usable.</h1>
           <p className="lead">
-            We&apos;re collecting the essentials for your role first. Address
-            autocomplete and validation can drop into this same flow next.
+            We&apos;re collecting the essentials for your role first, including
+            structured address capture that is ready for autocomplete and
+            validation.
           </p>
 
           {checklist.length ? (
@@ -480,93 +515,16 @@ export default function OnboardingPage() {
                   </label>
                 </div>
 
-                <div className="section-label">Farm address</div>
               </>
             )}
 
-            {role === "shopper" && <div className="section-label">Delivery address</div>}
-
             {(role === "shopper" || role === "grower") && (
-              <>
-                <div className="field-group field-group-full">
-                  <label htmlFor="addressLine1">Address line 1</label>
-                  <input
-                    id="addressLine1"
-                    name="addressLine1"
-                    value={formState.addressLine1}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="field-group field-group-full">
-                  <label htmlFor="addressLine2">Address line 2</label>
-                  <input
-                    id="addressLine2"
-                    name="addressLine2"
-                    value={formState.addressLine2}
-                    onChange={handleChange}
-                    placeholder="Unit, gate, shed, or landmark"
-                  />
-                </div>
-
-                <div className="field-group">
-                  <label htmlFor="suburb">Suburb</label>
-                  <input
-                    id="suburb"
-                    name="suburb"
-                    value={formState.suburb}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="field-group">
-                  <label htmlFor="state">State</label>
-                  <input
-                    id="state"
-                    name="state"
-                    value={formState.state}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="field-group">
-                  <label htmlFor="postcode">Postcode</label>
-                  <input
-                    id="postcode"
-                    name="postcode"
-                    value={formState.postcode}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="field-group">
-                  <label htmlFor="countryCode">Country code</label>
-                  <input
-                    id="countryCode"
-                    name="countryCode"
-                    value={formState.countryCode}
-                    onChange={handleChange}
-                    required
-                  />
-                </div>
-
-                <div className="field-group field-group-full">
-                  <label htmlFor="deliveryNotes">
-                    {role === "grower" ? "Farm access notes" : "Delivery notes"}
-                  </label>
-                  <textarea
-                    id="deliveryNotes"
-                    name="deliveryNotes"
-                    value={formState.deliveryNotes}
-                    onChange={handleChange}
-                    placeholder="Gate codes, landmarks, preferred drop spot"
-                  />
-                </div>
-              </>
+              <AddressFields
+                formState={formState}
+                onAddressSelect={handleAddressSelect}
+                onFieldChange={handleChange}
+                role={role}
+              />
             )}
 
             {role === "load_shifter" && (

@@ -30,6 +30,7 @@ markups, and putting more money back in farmers' pockets.
 2. Add environment variables in `.env.local`:
    - `NEXT_PUBLIC_SUPABASE_URL`
    - `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
+   - `NEXT_PUBLIC_GOOGLE_MAPS_API_KEY` for address autocomplete
 3. Start the app:
    `npm run dev`
 
@@ -61,6 +62,6 @@ for the fuller implementation notes.
 ## Next steps
 
 1. Add profile completion flows for shopper, grower, and load shifter.
-2. Build address capture with autocomplete and validation.
+2. Connect a Google Maps API key so onboarding address autocomplete turns on.
 3. Add listings, orders, delivery jobs, and dashboard actions.
 4. Expand into mobile once the web flows are proven.

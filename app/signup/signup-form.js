@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
 
 const roleOptions = [
@@ -11,6 +12,7 @@ const roleOptions = [
 ];
 
 export default function SignupForm({ initialRole }) {
+  const router = useRouter();
   const [formState, setFormState] = useState({
     fullName: "",
     email: "",
@@ -39,7 +41,7 @@ export default function SignupForm({ initialRole }) {
 
     try {
       const supabase = getSupabaseBrowserClient();
-      const { error } = await supabase.auth.signUp({
+      const { data, error } = await supabase.auth.signUp({
         email: formState.email,
         password: formState.password,
         options: {
@@ -54,10 +56,16 @@ export default function SignupForm({ initialRole }) {
         throw error;
       }
 
+      if (data.session) {
+        router.push("/onboarding");
+        router.refresh();
+        return;
+      }
+
       setStatus({
         type: "success",
         message:
-          "Account created. If email confirmation is enabled in Supabase, check your inbox before logging in.",
+          "Account created. If email confirmation is enabled in Supabase, check your inbox before logging in, then return here to complete onboarding.",
       });
     } catch (error) {
       setStatus({

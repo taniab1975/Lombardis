@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { getSupabaseBrowserClient } from "../../lib/supabase/client";
+import { getCompletionState } from "../../lib/profile-completion";
 
 const roleContent = {
   shopper: {
@@ -44,6 +45,11 @@ export default function PortalPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(true);
   const [profile, setProfile] = useState(null);
+  const [details, setDetails] = useState({
+    primaryAddress: null,
+    growerProfile: null,
+    loadShifterProfile: null,
+  });
   const [error, setError] = useState("");
 
   useEffect(() => {
@@ -59,17 +65,43 @@ export default function PortalPage() {
           return;
         }
 
-        const { data, error: profileError } = await supabase
-          .from("profiles")
-          .select("id, full_name, role, status, company_name")
-          .eq("id", session.user.id)
-          .single();
+        const [profileResult, addressResult, growerResult, loadShifterResult] =
+          await Promise.all([
+            supabase
+              .from("profiles")
+              .select("id, full_name, role, status, company_name, phone, service_area")
+              .eq("id", session.user.id)
+              .single(),
+            supabase
+              .from("addresses")
+              .select("*")
+              .eq("profile_id", session.user.id)
+              .in("type", ["delivery", "farm"])
+              .order("created_at", { ascending: false })
+              .limit(1)
+              .maybeSingle(),
+            supabase
+              .from("grower_profiles")
+              .select("*")
+              .eq("profile_id", session.user.id)
+              .maybeSingle(),
+            supabase
+              .from("load_shifter_profiles")
+              .select("*")
+              .eq("profile_id", session.user.id)
+              .maybeSingle(),
+          ]);
 
-        if (profileError) {
-          throw profileError;
+        if (profileResult.error) {
+          throw profileResult.error;
         }
 
-        setProfile(data);
+        setProfile(profileResult.data);
+        setDetails({
+          primaryAddress: addressResult.data,
+          growerProfile: growerResult.data,
+          loadShifterProfile: loadShifterResult.data,
+        });
       } catch (loadError) {
         setError(loadError.message || "Unable to load your portal.");
       } finally {
@@ -124,6 +156,12 @@ export default function PortalPage() {
 
   const currentRole = profile?.role || "shopper";
   const content = roleContent[currentRole] || roleContent.shopper;
+  const completion = getCompletionState({
+    profile,
+    primaryAddress: details.primaryAddress,
+    growerProfile: details.growerProfile,
+    loadShifterProfile: details.loadShifterProfile,
+  });
 
   return (
     <main className="app-shell">
@@ -137,10 +175,26 @@ export default function PortalPage() {
               is the first authenticated hub for your role-based journey through
               Lombardi&apos;s Farm to Fork.
             </p>
+            <div className="portal-meta">
+              <span>{completion.complete ? "Onboarding complete" : "Onboarding incomplete"}</span>
+              <Link className="inline-link" href="/onboarding">
+                {completion.complete ? "Update details" : "Complete onboarding"}
+              </Link>
+            </div>
           </div>
           <button className="button button-outline" onClick={handleLogout} type="button">
             Log out
           </button>
+        </div>
+
+        <div className="portal-grid">
+          {completion.checklist.map((item) => (
+            <article className="portal-card" key={item.label}>
+              <h3>{item.label}</h3>
+              <p>{item.done ? "Saved and ready." : "Still needed before this role is fully ready."}</p>
+              <span>{item.done ? "Complete" : "Needs attention"}</span>
+            </article>
+          ))}
         </div>
 
         <div className="portal-grid">

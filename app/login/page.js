@@ -32,7 +32,7 @@ export default function LoginPage() {
         throw error;
       }
 
-      router.push("/portal");
+      router.push("/onboarding");
       router.refresh();
     } catch (error) {
       setStatus({
